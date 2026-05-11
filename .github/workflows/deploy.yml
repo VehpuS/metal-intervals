@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      VITE_SHEET_CSV_URL: ${{ vars.VITE_SHEET_CSV_URL || secrets.VITE_SHEET_CSV_URL }}
+      VITE_SHEET_CSV_URL: ${{ vars.VITE_SHEET_CSV_URL || secrets.VITE_SHEET_CSV_URL || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJXrIXfNA2hHnuh3jmAdvgOReDSnBhSpbHwaFRrKAJGW8PxJ3hcE0CKxQCVIFOKjEWN55hcJulMO-v/pub?gid=921780761&single=true&output=csv' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
