@@ -126,18 +126,16 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
     try {
       const urlObj = new URL(normalizedUrl);
 
-      // 1. Handle Clips (YouTube blocks iframe embedding for pure /clip/ routes)
-      if (urlObj.pathname.includes("/clip/")) {
-        return { type: "clip", embedUrl: null, originalUrl: normalizedUrl };
-      }
-
-      // 2. Handle Standard Videos, Embed URLs & Shorts
+      // Handle videos, embeds, shorts and clips
       let videoId = "";
+      let clipId = urlObj.searchParams.get("clip") ?? "";
       if (urlObj.hostname.includes("youtube.com")) {
         if (urlObj.pathname.startsWith("/shorts/")) {
           videoId = urlObj.pathname.slice("/shorts/".length).split("/")[0];
         } else if (urlObj.pathname.startsWith("/embed/")) {
           videoId = urlObj.pathname.slice("/embed/".length).split("/")[0];
+        } else if (urlObj.pathname.startsWith("/clip/")) {
+          clipId = urlObj.pathname.slice("/clip/".length).split("/")[0] ?? "";
         } else {
           videoId = urlObj.searchParams.get("v") ?? "";
         }
@@ -145,7 +143,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
         videoId = urlObj.pathname.slice(1).split("/")[0];
       }
 
-      if (videoId) {
+      if (videoId || clipId) {
         const embedParams = new URLSearchParams({ autoplay: "1" });
 
         // Extract timestamp if present
@@ -159,15 +157,17 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           }
         }
 
-        const clip = urlObj.searchParams.get("clip");
-        if (clip) embedParams.set("clip", clip);
+        if (clipId) embedParams.set("clip", clipId);
 
         const clipt = urlObj.searchParams.get("clipt");
         if (clipt) embedParams.set("clipt", clipt);
 
-        const embedUrl = `https://www.youtube.com/embed/${videoId}?${embedParams.toString()}`;
+        const embedBase = videoId
+          ? `https://www.youtube.com/embed/${videoId}`
+          : "https://www.youtube.com/embed";
+        const embedUrl = `${embedBase}?${embedParams.toString()}`;
         return {
-          type: clip ? "clip" : "video",
+          type: clipId ? "clip" : "video",
           embedUrl,
           originalUrl: normalizedUrl,
         };
@@ -472,7 +472,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                         )}
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-zinc-400 transition-colors">
                           {item.type === "clip"
-                            ? "External Clip"
+                            ? "Clip"
                             : item.type === "video"
                               ? "Full Video"
                               : item.type === "unknown"
