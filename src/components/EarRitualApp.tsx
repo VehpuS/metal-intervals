@@ -131,11 +131,13 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
         return { type: "clip", embedUrl: null, originalUrl: normalizedUrl };
       }
 
-      // 2. Handle Standard Videos & Shorts
+      // 2. Handle Standard Videos, Embed URLs & Shorts
       let videoId = "";
       if (urlObj.hostname.includes("youtube.com")) {
         if (urlObj.pathname.startsWith("/shorts/")) {
           videoId = urlObj.pathname.split("/shorts/")[1];
+        } else if (urlObj.pathname.startsWith("/embed/")) {
+          videoId = urlObj.pathname.split("/embed/")[1];
         } else {
           videoId = urlObj.searchParams.get("v") ?? "";
         }
@@ -144,7 +146,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
       }
 
       if (videoId) {
-        let embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        const embedParams = new URLSearchParams({ autoplay: "1" });
 
         // Extract timestamp if present
         const t =
@@ -152,11 +154,23 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           urlObj.searchParams.get("time_continue");
         if (t) {
           const seconds = parseInt(t.replace("s", ""), 10);
-        if (!isNaN(seconds)) {
-          embedUrl += `&start=${seconds}`;
+          if (!isNaN(seconds)) {
+            embedParams.set("start", String(seconds));
+          }
         }
-      }
-        return { type: "video", embedUrl, originalUrl: normalizedUrl };
+
+        const clip = urlObj.searchParams.get("clip");
+        if (clip) embedParams.set("clip", clip);
+
+        const clipt = urlObj.searchParams.get("clipt");
+        if (clipt) embedParams.set("clipt", clipt);
+
+        const embedUrl = `https://www.youtube.com/embed/${videoId}?${embedParams.toString()}`;
+        return {
+          type: clip ? "clip" : "video",
+          embedUrl,
+          originalUrl: normalizedUrl,
+        };
       }
 
       return { type: "unknown", embedUrl: null, originalUrl: normalizedUrl };
