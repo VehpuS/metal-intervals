@@ -69,7 +69,7 @@ const isSearchableSongTitle = (value: string): boolean => {
 export default function EarRitualApp({ data }: EarRitualAppProps) {
   const [selectedIntervals, setSelectedIntervals] = useState<string[]>([]);
   const [intervalsInitialized, setIntervalsInitialized] = useState(false);
-  const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(false);
+  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isIntervalDrawerOpen, setIsIntervalDrawerOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVideo, setActiveVideo] = useState<Song | null>(null);
@@ -265,7 +265,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   return (
     <div className="flex h-screen bg-[#050505] text-zinc-100 font-sans selection:bg-red-600 selection:text-white overflow-hidden">
       {/* LEFT SIDEBAR: INTERVALS */}
-      {isLeftDrawerOpen && (
+      {isLeftSidebarOpen && (
         <aside className="w-80 border-r border-white/5 bg-[#080808] flex flex-col shrink-0 z-20">
           <div className="p-8 pb-4">
             <div className="flex items-center gap-3 mb-8">
@@ -369,12 +369,12 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
         <header className="h-24 border-b border-white/5 flex items-center justify-between px-10 bg-[#050505]/80 backdrop-blur-2xl z-10 shrink-0">
           <div className="flex items-center gap-12 flex-1">
             <button
-              onClick={() => setIsLeftDrawerOpen((open) => !open)}
-              aria-label={isLeftDrawerOpen ? "Hide interval drawer" : "Show interval drawer"}
-              aria-expanded={isLeftDrawerOpen}
+              onClick={() => setIsLeftSidebarOpen((open) => !open)}
+              aria-label={isLeftSidebarOpen ? "Hide interval drawer" : "Show interval drawer"}
+              aria-expanded={isLeftSidebarOpen}
               className="w-12 h-12 rounded-2xl border border-zinc-800 bg-zinc-900/40 flex items-center justify-center text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors shrink-0"
             >
-              {isLeftDrawerOpen ? (
+              {isLeftSidebarOpen ? (
                 <ChevronLeft className="w-5 h-5" />
               ) : (
                 <ChevronRight className="w-5 h-5" />
