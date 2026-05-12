@@ -128,7 +128,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           urlObj.searchParams.get("t") ||
           urlObj.searchParams.get("time_continue");
         if (t) {
-          const seconds = parseInt(t.replace("s", ""));
+          const seconds = parseInt(t.replace("s", ""), 10);
         if (!isNaN(seconds)) {
           embedUrl += `&start=${seconds}`;
         }
