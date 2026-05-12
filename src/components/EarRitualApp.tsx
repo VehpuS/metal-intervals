@@ -211,7 +211,10 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
     return result;
   }, [data]);
 
-  const allIntervalNames = processedData.map((i) => i.name);
+  const allIntervalNames = useMemo(
+    () => processedData.map((i) => i.name),
+    [processedData],
+  );
 
   useEffect(() => {
     if (!intervalsInitialized && allIntervalNames.length > 0) {
@@ -280,6 +283,8 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           <div className="px-4 mb-3 flex items-center justify-between">
             <button
               onClick={() => setIsIntervalDrawerOpen((o) => !o)}
+              aria-label="Toggle interval selection"
+              aria-expanded={isIntervalDrawerOpen}
               className="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity"
             >
               <ChevronDown
@@ -298,6 +303,11 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                       ? []
                       : allIntervalNames,
                   )
+                }
+                aria-label={
+                  selectedIntervals.length === allIntervalNames.length
+                    ? "Deselect all intervals"
+                    : "Select all intervals"
                 }
                 className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors"
               >
