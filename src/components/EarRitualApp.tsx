@@ -15,7 +15,7 @@ import {
   X,
   Youtube,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SheetRow = string[];
 
@@ -54,6 +54,18 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   const [selectedInterval, setSelectedInterval] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVideo, setActiveVideo] = useState<Song | null>(null);
+
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  });
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const parseYouTubeUrl = (url?: string): ParsedVideo => {
     if (!url || typeof url !== "string" || !url.startsWith("http")) {
@@ -168,10 +180,10 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   }, [activeIntervalData, searchTerm]);
 
   const handlePlayClick = (item: Song) => {
-    if (item.type === "clip" || (item.link && !item.embedUrl)) {
-      window.open(item.link, "_blank", "noopener,noreferrer");
-    } else if (item.embedUrl) {
+    if (item.embedUrl && isDesktop) {
       setActiveVideo(item);
+    } else if (item.link) {
+      window.open(item.link, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -318,15 +330,19 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                           <Scissors className="w-3.5 h-3.5 text-purple-500" />
                         ) : item.type === "video" ? (
                           <Youtube className="w-3.5 h-3.5 text-red-500" />
+                        ) : item.type === "unknown" ? (
+                          <ExternalLink className="w-3.5 h-3.5 text-blue-500" />
                         ) : (
-                          <Clock className="w-3.5 h-3.5 text-blue-500" />
+                          <Clock className="w-3.5 h-3.5 text-zinc-600" />
                         )}
                         <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-zinc-400 transition-colors">
                           {item.type === "clip"
                             ? "External Clip"
                             : item.type === "video"
                               ? "Full Video"
-                              : "No Valid Link"}
+                              : item.type === "unknown"
+                                ? "External Link"
+                                : "No Valid Link"}
                         </span>
                       </div>
                       <div className="w-1 h-1 rounded-full bg-zinc-800" />
@@ -342,11 +358,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                     <button
                       onClick={() => handlePlayClick(item)}
                       disabled={item.type === "none"}
-                      title={
-                        item.type === "clip"
-                          ? "Open clip in new tab"
-                          : "Play snippet"
-                      }
+                      title={item.type !== "none" ? "Play" : undefined}
                       className={`group/play w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all relative overflow-hidden shadow-2xl ${
                         item.type !== "none"
                           ? "bg-white text-black hover:scale-110 active:scale-95"
@@ -356,15 +368,9 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                       {item.type !== "none" && (
                         <div className="absolute inset-0 bg-red-600 translate-y-full group-hover/play:translate-y-0 transition-transform duration-300" />
                       )}
-                      {item.type === "clip" ? (
-                        <ExternalLink
-                          className="w-7 h-7 relative z-10 transition-colors group-hover/play:text-white"
-                        />
-                      ) : (
-                        <Play
+                      <Play
                           className={`w-8 h-8 fill-current relative z-10 transition-colors ${item.type !== "none" ? "group-hover/play:text-white" : ""}`}
                         />
-                      )}
                     </button>
                   </div>
                 </div>
