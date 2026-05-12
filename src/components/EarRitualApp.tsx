@@ -9,13 +9,11 @@ import {
   Disc,
   ExternalLink,
   Flame,
-  Maximize2,
   Music,
   Play,
   Scissors,
   Search,
   Volume2,
-  X,
   Youtube,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -35,7 +33,6 @@ type Song = {
   song: string;
   part: string;
   link: string;
-  embedUrl: string | null;
   type: VideoType;
 };
 
@@ -46,7 +43,6 @@ type IntervalGroup = {
 
 type ParsedVideo = {
   type: VideoType;
-  embedUrl: string | null;
   originalUrl: string;
 };
 
@@ -72,19 +68,6 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isIntervalDrawerOpen, setIsIntervalDrawerOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeVideo, setActiveVideo] = useState<Song | null>(null);
-
-  const [isDesktop, setIsDesktop] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  });
-
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   const normalizeSheetUrl = (value?: string): string => {
     if (!value || typeof value !== "string") return "";
@@ -120,7 +103,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   const parseYouTubeUrl = (url?: string): ParsedVideo => {
     const normalizedUrl = normalizeSheetUrl(url);
     if (!normalizedUrl) {
-      return { type: "none", embedUrl: null, originalUrl: "" };
+      return { type: "none", originalUrl: "" };
     }
 
     try {
@@ -144,38 +127,12 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
       }
 
       if (videoId || clipId) {
-        const embedParams = new URLSearchParams({ autoplay: "1" });
-
-        // Extract timestamp if present
-        const t =
-          urlObj.searchParams.get("t") ||
-          urlObj.searchParams.get("time_continue");
-        if (t) {
-          const seconds = parseInt(t.replace("s", ""), 10);
-          if (!isNaN(seconds)) {
-            embedParams.set("start", String(seconds));
-          }
-        }
-
-        if (clipId) embedParams.set("clip", clipId);
-
-        const clipt = urlObj.searchParams.get("clipt");
-        if (clipt) embedParams.set("clipt", clipt);
-
-        const embedBase = videoId
-          ? `https://www.youtube.com/embed/${videoId}`
-          : "https://www.youtube.com/embed";
-        const embedUrl = `${embedBase}?${embedParams.toString()}`;
-        return {
-          type: clipId ? "clip" : "video",
-          embedUrl,
-          originalUrl: normalizedUrl,
-        };
+        return { type: clipId ? "clip" : "video", originalUrl: normalizedUrl };
       }
 
-      return { type: "unknown", embedUrl: null, originalUrl: normalizedUrl };
+      return { type: "unknown", originalUrl: normalizedUrl };
     } catch {
-      return { type: "none", embedUrl: null, originalUrl: normalizedUrl };
+      return { type: "none", originalUrl: normalizedUrl };
     }
   };
 
@@ -211,7 +168,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           result.push(intervalGroup);
         }
 
-        const { type, embedUrl, originalUrl } = parseYouTubeUrl(link);
+        const { type, originalUrl } = parseYouTubeUrl(link);
 
         intervalGroup.songs.push({
           id: `song-${index}`,
@@ -220,7 +177,6 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           song: songName,
           part: part || "",
           link: originalUrl,
-          embedUrl,
           type,
         });
       }
@@ -269,9 +225,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   }, [processedData, selectedIntervals, searchTerm]);
 
   const handlePlayClick = (item: Song) => {
-    if (item.embedUrl && isDesktop) {
-      setActiveVideo(item);
-    } else if (item.link) {
+    if (item.link) {
       window.open(item.link, "_blank", "noopener,noreferrer");
     }
   };
@@ -426,7 +380,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
               filteredSongs.map((item) => (
                 <div
                   key={item.id}
-                  className={`group relative bg-[#0a0a0a] hover:bg-[#0e0e0e] border border-white/5 hover:border-white/10 rounded-[2rem] p-7 transition-all flex items-center gap-10 ${activeVideo?.id === item.id ? "ring-2 ring-red-600/40 bg-[#0f0a0a]" : ""}`}
+                  className="group relative bg-[#0a0a0a] hover:bg-[#0e0e0e] border border-white/5 hover:border-white/10 rounded-[2rem] p-7 transition-all flex items-center gap-10"
                 >
                   {/* Direction Indicator */}
                   <div
@@ -530,85 +484,6 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           </div>
         </div>
       </main>
-
-      {/* FLOATING MINI-PLAYER */}
-      {activeVideo && (
-        <div className="fixed bottom-8 right-8 w-[400px] bg-[#0c0c0c] border border-white/10 rounded-[2rem] shadow-[0_30px_100px_-10px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-bottom-10 duration-500 z-50">
-          <div className="aspect-video bg-black relative group/player">
-            {activeVideo.embedUrl ? (
-              <iframe
-                width="100%"
-                height="100%"
-                src={activeVideo.embedUrl}
-                title="YouTube player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600 bg-zinc-950">
-                <Youtube className="w-12 h-12 mb-4 opacity-20" />
-                <p className="text-[10px] font-black uppercase tracking-widest">
-                  Unable to load media
-                </p>
-              </div>
-            )}
-
-            {/* Top Bar Overlay */}
-            <div className="absolute top-0 inset-x-0 p-4 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between opacity-0 group-hover/player:opacity-100 transition-opacity">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-white drop-shadow-md">
-                  Playing Riff
-                </span>
-              </div>
-              <button
-                onClick={() => setActiveVideo(null)}
-                className="w-8 h-8 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-red-600 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          <div className="p-6 bg-[#0c0c0c]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="min-w-0 flex-1">
-                <h4 className="text-lg font-black text-white uppercase italic tracking-tighter truncate leading-none mb-1">
-                  {activeVideo.song}
-                </h4>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500">
-                    {activeVideo.part || "Reference Riff"}
-                  </span>
-                  <div className="w-1 h-1 rounded-full bg-zinc-800" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-red-600">
-                    {activeVideo.type} Mode
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => window.open(activeVideo.link, "_blank")}
-                  className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-all"
-                  title="Open in YouTube"
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 pt-4 border-t border-white/5">
-              <div className="flex-1 h-1.5 bg-zinc-900 rounded-full overflow-hidden">
-                <div className="h-full bg-red-600 w-1/3 rounded-full" />
-              </div>
-              <span className="text-[10px] font-black text-zinc-600 font-mono">
-                LIVE
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Decorative background text */}
       <div className="fixed bottom-[-40px] right-[-40px] pointer-events-none select-none opacity-[0.03] z-0">
