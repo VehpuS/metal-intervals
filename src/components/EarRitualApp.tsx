@@ -52,6 +52,16 @@ type EarRitualAppProps = {
 
 const MIN_SONG_TITLE_LENGTH = 6;
 const MAX_SONG_TITLE_LENGTH = 120;
+const SONG_TITLE_SEARCH_PATTERN = /^(?=.*[a-z])[-a-z0-9\s!&.,:+]+$/i;
+
+const isSearchableSongTitle = (value: string): boolean => {
+  return (
+    value.length >= MIN_SONG_TITLE_LENGTH &&
+    value.length <= MAX_SONG_TITLE_LENGTH &&
+    /\s/.test(value) &&
+    SONG_TITLE_SEARCH_PATTERN.test(value)
+  );
+};
 
 export default function EarRitualApp({ data }: EarRitualAppProps) {
   const [selectedInterval, setSelectedInterval] = useState<string | null>(null);
@@ -94,13 +104,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
 
     if (/^youtu\.be\//i.test(unquotedValue)) return `https://${unquotedValue}`;
 
-    const looksLikeSongTitle =
-      unquotedValue.length >= MIN_SONG_TITLE_LENGTH &&
-      unquotedValue.length <= MAX_SONG_TITLE_LENGTH &&
-      /\s/.test(unquotedValue) &&
-      /^(?=.*[a-z])[-a-z0-9\s!'"&().,+:]+$/i.test(unquotedValue);
-
-    if (looksLikeSongTitle) {
+    if (isSearchableSongTitle(unquotedValue)) {
       return `https://www.youtube.com/results?search_query=${encodeURIComponent(unquotedValue)}`;
     }
 
