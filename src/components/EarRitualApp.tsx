@@ -67,17 +67,45 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  const normalizeSheetUrl = (value?: string): string => {
+    if (!value || typeof value !== "string") return "";
+
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return "";
+
+    const unquotedValue = trimmedValue
+      .replace(/^["']/, "")
+      .replace(/["']$/, "")
+      .trim();
+
+    const hyperlinkMatch = unquotedValue.match(
+      /^=HYPERLINK\(\s*"([^"]+)"\s*[,;]/i,
+    );
+    if (hyperlinkMatch?.[1]) return hyperlinkMatch[1].trim();
+
+    if (/^https?:\/\//i.test(unquotedValue)) return unquotedValue;
+
+    if (/^(www\.)?youtube\.com\//i.test(unquotedValue)) {
+      return `https://${unquotedValue.replace(/^www\./i, "www.")}`;
+    }
+
+    if (/^youtu\.be\//i.test(unquotedValue)) return `https://${unquotedValue}`;
+
+    return "";
+  };
+
   const parseYouTubeUrl = (url?: string): ParsedVideo => {
-    if (!url || typeof url !== "string" || !url.startsWith("http")) {
-      return { type: "none", embedUrl: null, originalUrl: url || "" };
+    const normalizedUrl = normalizeSheetUrl(url);
+    if (!normalizedUrl) {
+      return { type: "none", embedUrl: null, originalUrl: "" };
     }
 
     try {
-      const urlObj = new URL(url);
+      const urlObj = new URL(normalizedUrl);
 
       // 1. Handle Clips (YouTube blocks iframe embedding for pure /clip/ routes)
       if (urlObj.pathname.includes("/clip/")) {
-        return { type: "clip", embedUrl: null, originalUrl: url };
+        return { type: "clip", embedUrl: null, originalUrl: normalizedUrl };
       }
 
       // 2. Handle Standard Videos & Shorts
@@ -101,16 +129,16 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           urlObj.searchParams.get("time_continue");
         if (t) {
           const seconds = parseInt(t.replace("s", ""));
-          if (!isNaN(seconds)) {
-            embedUrl += `&start=${seconds}`;
-          }
+        if (!isNaN(seconds)) {
+          embedUrl += `&start=${seconds}`;
         }
-        return { type: "video", embedUrl, originalUrl: url };
+      }
+        return { type: "video", embedUrl, originalUrl: normalizedUrl };
       }
 
-      return { type: "unknown", embedUrl: null, originalUrl: url };
+      return { type: "unknown", embedUrl: null, originalUrl: normalizedUrl };
     } catch {
-      return { type: "none", embedUrl: null, originalUrl: url };
+      return { type: "none", embedUrl: null, originalUrl: normalizedUrl };
     }
   };
 
