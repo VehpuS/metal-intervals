@@ -135,7 +135,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
         } else if (urlObj.pathname.startsWith("/embed/")) {
           videoId = urlObj.pathname.slice("/embed/".length).split("/")[0];
         } else if (urlObj.pathname.startsWith("/clip/")) {
-          clipId = urlObj.pathname.slice("/clip/".length).split("/")[0] ?? "";
+          clipId = urlObj.pathname.slice("/clip/".length).split("/")[0];
         } else {
           videoId = urlObj.searchParams.get("v") ?? "";
         }
