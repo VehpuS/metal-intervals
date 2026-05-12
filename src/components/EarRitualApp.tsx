@@ -91,6 +91,10 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
 
     if (/^youtu\.be\//i.test(unquotedValue)) return `https://${unquotedValue}`;
 
+    if (/^[\w\s!'"&().,+:-]+$/i.test(unquotedValue)) {
+      return `https://www.youtube.com/results?search_query=${encodeURIComponent(unquotedValue)}`;
+    }
+
     return "";
   };
 
