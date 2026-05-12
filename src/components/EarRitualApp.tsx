@@ -52,13 +52,12 @@ type EarRitualAppProps = {
 
 const MIN_SONG_TITLE_LENGTH = 6;
 const MAX_SONG_TITLE_LENGTH = 120;
-const SONG_TITLE_SEARCH_PATTERN = /^(?=.*[a-z])[-a-z0-9\s!&.,:+]+$/i;
+const SONG_TITLE_SEARCH_PATTERN = /^(?=.*[a-z])(?=.*\s)[-a-z0-9 !&.,:+]+$/i;
 
 const isSearchableSongTitle = (value: string): boolean => {
   return (
     value.length >= MIN_SONG_TITLE_LENGTH &&
     value.length <= MAX_SONG_TITLE_LENGTH &&
-    /\s/.test(value) &&
     SONG_TITLE_SEARCH_PATTERN.test(value)
   );
 };
