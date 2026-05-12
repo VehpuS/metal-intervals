@@ -358,13 +358,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                     <button
                       onClick={() => handlePlayClick(item)}
                       disabled={item.type === "none"}
-                      title={
-                        item.type === "none"
-                          ? undefined
-                          : item.embedUrl && isDesktop
-                            ? "Play snippet"
-                            : "Open in new tab"
-                      }
+                      title={item.type !== "none" ? "Play" : undefined}
                       className={`group/play w-16 h-16 rounded-[1.5rem] flex items-center justify-center transition-all relative overflow-hidden shadow-2xl ${
                         item.type !== "none"
                           ? "bg-white text-black hover:scale-110 active:scale-95"
@@ -374,15 +368,9 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                       {item.type !== "none" && (
                         <div className="absolute inset-0 bg-red-600 translate-y-full group-hover/play:translate-y-0 transition-transform duration-300" />
                       )}
-                      {item.embedUrl && isDesktop ? (
-                        <Play
+                      <Play
                           className={`w-8 h-8 fill-current relative z-10 transition-colors ${item.type !== "none" ? "group-hover/play:text-white" : ""}`}
                         />
-                      ) : (
-                        <ExternalLink
-                          className="w-7 h-7 relative z-10 transition-colors group-hover/play:text-white"
-                        />
-                      )}
                     </button>
                   </div>
                 </div>
