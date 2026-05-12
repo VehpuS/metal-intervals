@@ -86,7 +86,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
     if (/^https?:\/\//i.test(unquotedValue)) return unquotedValue;
 
     if (/^(www\.)?youtube\.com\//i.test(unquotedValue)) {
-      return `https://${unquotedValue.replace(/^www\./i, "www.")}`;
+      return `https://${unquotedValue}`;
     }
 
     if (/^youtu\.be\//i.test(unquotedValue)) return `https://${unquotedValue}`;
