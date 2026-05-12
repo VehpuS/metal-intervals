@@ -135,14 +135,14 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
       let videoId = "";
       if (urlObj.hostname.includes("youtube.com")) {
         if (urlObj.pathname.startsWith("/shorts/")) {
-          videoId = urlObj.pathname.split("/shorts/")[1];
+          videoId = urlObj.pathname.slice("/shorts/".length).split("/")[0];
         } else if (urlObj.pathname.startsWith("/embed/")) {
-          videoId = urlObj.pathname.split("/embed/")[1];
+          videoId = urlObj.pathname.slice("/embed/".length).split("/")[0];
         } else {
           videoId = urlObj.searchParams.get("v") ?? "";
         }
       } else if (urlObj.hostname.includes("youtu.be")) {
-        videoId = urlObj.pathname.slice(1);
+        videoId = urlObj.pathname.slice(1).split("/")[0];
       }
 
       if (videoId) {
