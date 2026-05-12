@@ -2,6 +2,8 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ChevronDown,
   Clock,
   Disc,
@@ -67,6 +69,7 @@ const isSearchableSongTitle = (value: string): boolean => {
 export default function EarRitualApp({ data }: EarRitualAppProps) {
   const [selectedIntervals, setSelectedIntervals] = useState<string[]>([]);
   const [intervalsInitialized, setIntervalsInitialized] = useState(false);
+  const [isLeftDrawerOpen, setIsLeftDrawerOpen] = useState(false);
   const [isIntervalDrawerOpen, setIsIntervalDrawerOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVideo, setActiveVideo] = useState<Song | null>(null);
@@ -262,107 +265,121 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   return (
     <div className="flex h-screen bg-[#050505] text-zinc-100 font-sans selection:bg-red-600 selection:text-white overflow-hidden">
       {/* LEFT SIDEBAR: INTERVALS */}
-      <aside className="w-80 border-r border-white/5 bg-[#080808] flex flex-col shrink-0 z-20">
-        <div className="p-8 pb-4">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-red-600 flex items-center justify-center rounded-2xl shadow-lg shadow-red-900/20 rotate-3">
-              <Disc className="w-7 h-7 text-white animate-spin-slow" />
-            </div>
-            <div>
-              <h1 className="text-xl font-black italic tracking-tighter uppercase leading-none">
-                Ear Ritual
-              </h1>
-              <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1">
-                Metal Training
-              </p>
+      {isLeftDrawerOpen && (
+        <aside className="w-80 border-r border-white/5 bg-[#080808] flex flex-col shrink-0 z-20">
+          <div className="p-8 pb-4">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 bg-red-600 flex items-center justify-center rounded-2xl shadow-lg shadow-red-900/20 rotate-3">
+                <Disc className="w-7 h-7 text-white animate-spin-slow" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black italic tracking-tighter uppercase leading-none">
+                  Ear Ritual
+                </h1>
+                <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1">
+                  Metal Training
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 custom-scrollbar">
-          <div className="px-4 mb-3 flex items-center justify-between">
-            <button
-              onClick={() => setIsIntervalDrawerOpen((o) => !o)}
-              aria-label="Toggle interval selection"
-              aria-expanded={isIntervalDrawerOpen}
-              className="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity"
-            >
-              <ChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${isIntervalDrawerOpen ? "" : "-rotate-90"}`}
-              />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                Select Interval
-              </span>
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="h-[1px] flex-1 mx-2 bg-zinc-800" />
+          <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 custom-scrollbar">
+            <div className="px-4 mb-3 flex items-center justify-between">
               <button
-                onClick={() =>
-                  setSelectedIntervals(
-                    selectedIntervals.length === allIntervalNames.length
-                      ? []
-                      : allIntervalNames,
-                  )
-                }
-                aria-label={
-                  selectedIntervals.length === allIntervalNames.length
-                    ? "Deselect all intervals"
-                    : "Select all intervals"
-                }
-                className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors"
+                onClick={() => setIsIntervalDrawerOpen((o) => !o)}
+                aria-label="Toggle interval selection"
+                aria-expanded={isIntervalDrawerOpen}
+                className="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity"
               >
-                {selectedIntervals.length === allIntervalNames.length
-                  ? "None"
-                  : "All"}
-              </button>
-            </div>
-          </div>
-          {isIntervalDrawerOpen &&
-            allIntervalNames.map((interval) => (
-              <button
-                key={interval}
-                onClick={() => toggleInterval(interval)}
-                className={`w-full text-left px-5 py-4 rounded-2xl text-xs font-black transition-all flex items-center justify-between group border ${
-                  selectedIntervals.includes(interval)
-                    ? "bg-zinc-900 text-white border-zinc-700 shadow-2xl"
-                    : "text-zinc-500 hover:bg-white/5 border-transparent hover:text-zinc-200"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-1.5 h-1.5 rounded-full ${selectedIntervals.includes(interval) ? "bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" : "bg-transparent"}`}
-                  />
-                  <span className="uppercase tracking-widest">{interval}</span>
-                </div>
-                <Check
-                  className={`w-4 h-4 transition-all ${selectedIntervals.includes(interval) ? "opacity-100 text-red-500" : "opacity-0"}`}
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${isIntervalDrawerOpen ? "" : "-rotate-90"}`}
                 />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                  Select Interval
+                </span>
               </button>
-            ))}
-        </nav>
-
-        <div className="p-6 bg-black border-t border-white/5">
-          <div className="flex items-center gap-4 p-4 bg-zinc-900/40 rounded-2xl border border-zinc-800/50">
-            <div className="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center">
-              <Flame className="w-5 h-5 text-red-600" />
+              <div className="flex items-center gap-3">
+                <div className="h-[1px] flex-1 mx-2 bg-zinc-800" />
+                <button
+                  onClick={() =>
+                    setSelectedIntervals(
+                      selectedIntervals.length === allIntervalNames.length
+                        ? []
+                        : allIntervalNames,
+                    )
+                  }
+                  aria-label={
+                    selectedIntervals.length === allIntervalNames.length
+                      ? "Deselect all intervals"
+                      : "Select all intervals"
+                  }
+                  className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors"
+                >
+                  {selectedIntervals.length === allIntervalNames.length
+                    ? "None"
+                    : "All"}
+                </button>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
-                Pro Library
-              </p>
-              <p className="text-[9px] text-zinc-500 font-bold uppercase mt-0.5">
-                Read-Only Mode
-              </p>
+            {isIntervalDrawerOpen &&
+              allIntervalNames.map((interval) => (
+                <button
+                  key={interval}
+                  onClick={() => toggleInterval(interval)}
+                  className={`w-full text-left px-5 py-4 rounded-2xl text-xs font-black transition-all flex items-center justify-between group border ${
+                    selectedIntervals.includes(interval)
+                      ? "bg-zinc-900 text-white border-zinc-700 shadow-2xl"
+                      : "text-zinc-500 hover:bg-white/5 border-transparent hover:text-zinc-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${selectedIntervals.includes(interval) ? "bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" : "bg-transparent"}`}
+                    />
+                    <span className="uppercase tracking-widest">{interval}</span>
+                  </div>
+                  <Check
+                    className={`w-4 h-4 transition-all ${selectedIntervals.includes(interval) ? "opacity-100 text-red-500" : "opacity-0"}`}
+                  />
+                </button>
+              ))}
+          </nav>
+
+          <div className="p-6 bg-black border-t border-white/5">
+            <div className="flex items-center gap-4 p-4 bg-zinc-900/40 rounded-2xl border border-zinc-800/50">
+              <div className="w-10 h-10 bg-red-600/10 rounded-xl flex items-center justify-center">
+                <Flame className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-300">
+                  Pro Library
+                </p>
+                <p className="text-[9px] text-zinc-500 font-bold uppercase mt-0.5">
+                  Read-Only Mode
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      )}
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col bg-[#050505] relative overflow-hidden">
         {/* TOP BAR */}
         <header className="h-24 border-b border-white/5 flex items-center justify-between px-10 bg-[#050505]/80 backdrop-blur-2xl z-10 shrink-0">
           <div className="flex items-center gap-12 flex-1">
+            <button
+              onClick={() => setIsLeftDrawerOpen((open) => !open)}
+              aria-label={isLeftDrawerOpen ? "Hide interval drawer" : "Show interval drawer"}
+              aria-expanded={isLeftDrawerOpen}
+              className="w-12 h-12 rounded-2xl border border-zinc-800 bg-zinc-900/40 flex items-center justify-center text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors shrink-0"
+            >
+              {isLeftDrawerOpen ? (
+                <ChevronLeft className="w-5 h-5" />
+              ) : (
+                <ChevronRight className="w-5 h-5" />
+              )}
+            </button>
             <div className="flex flex-col">
               <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">
                 {activeIntervalLabel || "Loading..."}
