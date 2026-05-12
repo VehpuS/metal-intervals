@@ -1,7 +1,8 @@
 import {
   ArrowDownRight,
   ArrowUpRight,
-  ChevronRight,
+  Check,
+  ChevronDown,
   Clock,
   Disc,
   ExternalLink,
@@ -27,6 +28,7 @@ type VideoType = "none" | "clip" | "video" | "unknown";
 
 type Song = {
   id: string;
+  interval: string;
   direction: string;
   song: string;
   part: string;
@@ -63,7 +65,9 @@ const isSearchableSongTitle = (value: string): boolean => {
 };
 
 export default function EarRitualApp({ data }: EarRitualAppProps) {
-  const [selectedInterval, setSelectedInterval] = useState<string | null>(null);
+  const [selectedIntervals, setSelectedIntervals] = useState<string[]>([]);
+  const [intervalsInitialized, setIntervalsInitialized] = useState(false);
+  const [isIntervalDrawerOpen, setIsIntervalDrawerOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVideo, setActiveVideo] = useState<Song | null>(null);
 
@@ -194,6 +198,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
 
         intervalGroup.songs.push({
           id: `song-${index}`,
+          interval: lastInterval,
           direction: lastDirection || "Unknown",
           song: songName,
           part: part || "",
@@ -207,21 +212,41 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
   }, [data]);
 
   const allIntervalNames = processedData.map((i) => i.name);
-  const activeInterval =
-    selectedInterval ||
-    (allIntervalNames.length > 0 ? allIntervalNames[0] : null);
-  const activeIntervalData = processedData.find(
-    (i) => i.name === activeInterval,
-  );
+
+  useEffect(() => {
+    if (!intervalsInitialized && allIntervalNames.length > 0) {
+      setSelectedIntervals(allIntervalNames);
+      setIntervalsInitialized(true);
+    }
+  }, [allIntervalNames, intervalsInitialized]);
+
+  const activeIntervalLabel =
+    selectedIntervals.length === 0
+      ? "No Intervals"
+      : selectedIntervals.length === allIntervalNames.length
+        ? "All Intervals"
+        : selectedIntervals.length === 1
+          ? selectedIntervals[0]
+          : `${selectedIntervals.length} Intervals`;
+
+  const toggleInterval = (interval: string) => {
+    setSelectedIntervals((prev) =>
+      prev.includes(interval)
+        ? prev.filter((i) => i !== interval)
+        : [...prev, interval],
+    );
+  };
 
   const filteredSongs = useMemo(() => {
-    if (!activeIntervalData) return [];
-    return activeIntervalData.songs.filter(
+    const songs = processedData
+      .filter((g) => selectedIntervals.includes(g.name))
+      .flatMap((g) => g.songs);
+    return songs.filter(
       (s) =>
         s.song.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.part.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [activeIntervalData, searchTerm]);
+  }, [processedData, selectedIntervals, searchTerm]);
 
   const handlePlayClick = (item: Song) => {
     if (item.embedUrl && isDesktop) {
@@ -252,33 +277,58 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 custom-scrollbar">
-          <div className="px-4 mb-3 flex items-center justify-between opacity-40">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-              Select Interval
-            </span>
-            <div className="h-[1px] flex-1 mx-4 bg-zinc-800" />
-          </div>
-          {allIntervalNames.map((interval) => (
+          <div className="px-4 mb-3 flex items-center justify-between">
             <button
-              key={interval}
-              onClick={() => setSelectedInterval(interval)}
-              className={`w-full text-left px-5 py-4 rounded-2xl text-xs font-black transition-all flex items-center justify-between group border ${
-                activeInterval === interval
-                  ? "bg-zinc-900 text-white border-zinc-700 shadow-2xl"
-                  : "text-zinc-500 hover:bg-white/5 border-transparent hover:text-zinc-200"
-              }`}
+              onClick={() => setIsIntervalDrawerOpen((o) => !o)}
+              className="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity"
             >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-1.5 h-1.5 rounded-full ${activeInterval === interval ? "bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" : "bg-transparent"}`}
-                />
-                <span className="uppercase tracking-widest">{interval}</span>
-              </div>
-              <ChevronRight
-                className={`w-4 h-4 transition-all ${activeInterval === interval ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-40"}`}
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${isIntervalDrawerOpen ? "" : "-rotate-90"}`}
               />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                Select Interval
+              </span>
             </button>
-          ))}
+            <div className="flex items-center gap-3">
+              <div className="h-[1px] flex-1 mx-2 bg-zinc-800" />
+              <button
+                onClick={() =>
+                  setSelectedIntervals(
+                    selectedIntervals.length === allIntervalNames.length
+                      ? []
+                      : allIntervalNames,
+                  )
+                }
+                className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-zinc-400 transition-colors"
+              >
+                {selectedIntervals.length === allIntervalNames.length
+                  ? "None"
+                  : "All"}
+              </button>
+            </div>
+          </div>
+          {isIntervalDrawerOpen &&
+            allIntervalNames.map((interval) => (
+              <button
+                key={interval}
+                onClick={() => toggleInterval(interval)}
+                className={`w-full text-left px-5 py-4 rounded-2xl text-xs font-black transition-all flex items-center justify-between group border ${
+                  selectedIntervals.includes(interval)
+                    ? "bg-zinc-900 text-white border-zinc-700 shadow-2xl"
+                    : "text-zinc-500 hover:bg-white/5 border-transparent hover:text-zinc-200"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${selectedIntervals.includes(interval) ? "bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" : "bg-transparent"}`}
+                  />
+                  <span className="uppercase tracking-widest">{interval}</span>
+                </div>
+                <Check
+                  className={`w-4 h-4 transition-all ${selectedIntervals.includes(interval) ? "opacity-100 text-red-500" : "opacity-0"}`}
+                />
+              </button>
+            ))}
         </nav>
 
         <div className="p-6 bg-black border-t border-white/5">
@@ -305,7 +355,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
           <div className="flex items-center gap-12 flex-1">
             <div className="flex flex-col">
               <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">
-                {activeInterval || "Loading..."}
+                {activeIntervalLabel || "Loading..."}
               </h2>
               <div className="flex items-center gap-2 mt-2">
                 <div className="h-1 w-8 bg-red-600 rounded-full" />
@@ -392,7 +442,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                       <div className="w-1 h-1 rounded-full bg-zinc-800" />
                       <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-600">
                         <Volume2 className="w-3.5 h-3.5 opacity-40" />
-                        <span>Interval: {activeInterval}</span>
+                        <span>Interval: {item.interval}</span>
                       </div>
                     </div>
                   </div>
@@ -430,7 +480,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
                 <p className="text-zinc-500 max-w-sm text-sm font-medium leading-relaxed uppercase tracking-widest">
                   No artifacts match the ritual search for{" "}
                   <span className="text-red-600 font-black">
-                    "{activeInterval}"
+                    "{activeIntervalLabel}"
                   </span>
                   .
                 </p>
