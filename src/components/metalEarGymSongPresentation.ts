@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Clock, ExternalLink, Scissors, Youtube } from "lucide-react";
 
-import type { VideoType } from "./earRitualTypes";
+import type { VideoType } from "./metalEarGymTypes";
 
 type SongLinkMeta = {
   icon: LucideIcon;

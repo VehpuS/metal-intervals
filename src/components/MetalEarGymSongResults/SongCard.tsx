@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowUpRight, Play, Volume2 } from "lucide-react";
 
-import { getSongLinkMeta } from "../earRitualSongPresentation";
+import { getSongLinkMeta } from "../metalEarGymSongPresentation";
 import type { SongCardProps } from "./types";
 
 export function SongCard({ song, onPlayClick }: SongCardProps) {

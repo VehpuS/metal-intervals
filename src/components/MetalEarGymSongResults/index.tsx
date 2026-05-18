@@ -1,12 +1,12 @@
 import { EmptyResults } from "./EmptyResults";
 import { SongCard } from "./SongCard";
-import type { EarRitualSongResultsProps } from "./types";
+import type { MetalEarGymSongResultsProps } from "./types";
 
-export default function EarRitualSongResults({
+export default function MetalEarGymSongResults({
   songs,
   activeIntervalLabel,
   onPlayClick,
-}: EarRitualSongResultsProps) {
+}: MetalEarGymSongResultsProps) {
   return (
     <div className="flex-1 overflow-y-auto p-10 custom-scrollbar pb-32">
       <div className="max-w-5xl mx-auto space-y-4">

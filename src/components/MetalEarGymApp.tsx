@@ -1,17 +1,17 @@
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import EarRitualSidebar from "./EarRitualSidebar";
-import EarRitualSongResults from "./EarRitualSongResults";
-import { parseEarRitualData } from "./earRitualData";
-import type { EarRitualAppProps, Song } from "./earRitualTypes";
+import MetalEarGymSidebar from "./MetalEarGymSidebar";
+import MetalEarGymSongResults from "./MetalEarGymSongResults";
+import { parseMetalEarGymData } from "./metalEarGymData";
+import type { MetalEarGymAppProps, Song } from "./metalEarGymTypes";
 
-export default function EarRitualApp({ data }: EarRitualAppProps) {
+export default function MetalEarGymApp({ data }: MetalEarGymAppProps) {
   const [selectedIntervals, setSelectedIntervals] = useState<string[]>([]);
   const [intervalsInitialized, setIntervalsInitialized] = useState(false);
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const processedData = useMemo(() => parseEarRitualData(data), [data]);
+  const processedData = useMemo(() => parseMetalEarGymData(data), [data]);
 
   const allIntervalNames = useMemo(
     () => processedData.map((i) => i.name),
@@ -71,7 +71,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
 
   return (
     <div className="flex h-screen bg-[#050505] text-zinc-100 font-sans selection:bg-red-600 selection:text-white overflow-hidden">
-      <EarRitualSidebar
+      <MetalEarGymSidebar
         isOpen={isLeftSidebarOpen}
         selectedIntervals={selectedIntervals}
         allIntervalNames={allIntervalNames}
@@ -122,7 +122,7 @@ export default function EarRitualApp({ data }: EarRitualAppProps) {
             </div>
           </div>
         </header>
-        <EarRitualSongResults
+        <MetalEarGymSongResults
           songs={filteredSongs}
           activeIntervalLabel={activeIntervalLabel}
           onPlayClick={handlePlayClick}

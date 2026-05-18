@@ -1,6 +1,6 @@
-import type { Song } from "../earRitualTypes";
+import type { Song } from "../metalEarGymTypes";
 
-export type EarRitualSongResultsProps = {
+export type MetalEarGymSongResultsProps = {
   songs: Song[];
   activeIntervalLabel: string;
   onPlayClick: (song: Song) => void;

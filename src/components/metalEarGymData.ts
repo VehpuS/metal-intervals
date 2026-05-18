@@ -1,9 +1,9 @@
 import type {
-  EarRitualRow,
   IntervalGroup,
+  MetalEarGymRow,
   ParsedVideo,
   SheetRow,
-} from "./earRitualTypes";
+} from "./metalEarGymTypes";
 
 const MIN_SONG_TITLE_LENGTH = 6;
 const MAX_SONG_TITLE_LENGTH = 120;
@@ -30,7 +30,7 @@ const isSearchableSongTitle = (value: string): boolean => {
   );
 };
 
-const toRows = (data: EarRitualRow[]): SheetRow[] => {
+const toRows = (data: MetalEarGymRow[]): SheetRow[] => {
   return data.map((entry) =>
     Array.isArray(entry) ? entry : (entry.row ?? []),
   );
@@ -105,7 +105,9 @@ const parseYouTubeUrl = (url?: string): ParsedVideo => {
   }
 };
 
-export const parseEarRitualData = (data: EarRitualRow[]): IntervalGroup[] => {
+export const parseMetalEarGymData = (
+  data: MetalEarGymRow[],
+): IntervalGroup[] => {
   const result: IntervalGroup[] = [];
   let lastInterval = DEFAULT_INTERVAL_NAME;
   let lastDirection = DEFAULT_DIRECTION_NAME;

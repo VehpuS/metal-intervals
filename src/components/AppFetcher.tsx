@@ -1,6 +1,6 @@
 import Papa, { type ParseResult } from "papaparse";
 import { useEffect, useState } from "react";
-import EarRitualApp from "./EarRitualApp";
+import MetalEarGymApp from "./MetalEarGymApp";
 
 const SHEET_CSV_URL = import.meta.env.VITE_SHEET_CSV_URL;
 
@@ -13,7 +13,9 @@ export default function AppFetcher() {
 
   useEffect(() => {
     if (!SHEET_CSV_URL) {
-      setError("Missing VITE_SHEET_CSV_URL. Ritual source is not configured.");
+      setError(
+        "Missing VITE_SHEET_CSV_URL. Intervals source is not configured.",
+      );
       setIsLoading(false);
       return;
     }
@@ -28,7 +30,7 @@ export default function AppFetcher() {
       },
       error: (parseError: Error) => {
         console.error("Error fetching sheet:", parseError);
-        setError("Failed to load ritual data. The void stares back.");
+        setError("Failed to load gym data. The void stares back.");
         setIsLoading(false);
       },
     });
@@ -55,5 +57,5 @@ export default function AppFetcher() {
     );
   }
 
-  return <EarRitualApp data={sheetData} />;
+  return <MetalEarGymApp data={sheetData} />;
 }

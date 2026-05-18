@@ -4,7 +4,7 @@ export type RowWrapper = {
   row?: SheetRow;
 };
 
-export type EarRitualRow = SheetRow | RowWrapper;
+export type MetalEarGymRow = SheetRow | RowWrapper;
 
 export type VideoType = "none" | "clip" | "video" | "unknown";
 
@@ -28,6 +28,6 @@ export type ParsedVideo = {
   originalUrl: string;
 };
 
-export type EarRitualAppProps = {
-  data: EarRitualRow[];
+export type MetalEarGymAppProps = {
+  data: MetalEarGymRow[];
 };

@@ -1,6 +1,6 @@
 import { Check, Disc } from "lucide-react";
 
-type EarRitualSidebarProps = {
+type MetalEarGymSidebarProps = {
   isOpen: boolean;
   selectedIntervals: string[];
   allIntervalNames: string[];
@@ -8,13 +8,13 @@ type EarRitualSidebarProps = {
   onToggleAll: () => void;
 };
 
-export default function EarRitualSidebar({
+export default function MetalEarGymSidebar({
   isOpen,
   selectedIntervals,
   allIntervalNames,
   onToggleInterval,
   onToggleAll,
-}: EarRitualSidebarProps) {
+}: MetalEarGymSidebarProps) {
   if (!isOpen) {
     return null;
   }
@@ -31,7 +31,7 @@ export default function EarRitualSidebar({
           </div>
           <div>
             <h1 className="text-xl font-black italic tracking-tighter uppercase leading-none">
-              Ear Ritual
+              Metal Ear Gym
             </h1>
             <p className="text-[10px] text-zinc-500 font-bold tracking-widest uppercase mt-1">
               Metal Training
