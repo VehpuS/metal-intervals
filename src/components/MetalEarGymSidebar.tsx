@@ -6,6 +6,7 @@ type MetalEarGymSidebarProps = {
   allIntervalNames: string[];
   onToggleInterval: (interval: string) => void;
   onToggleAll: () => void;
+  onClose: () => void;
 };
 
 export default function MetalEarGymSidebar({
@@ -14,6 +15,7 @@ export default function MetalEarGymSidebar({
   allIntervalNames,
   onToggleInterval,
   onToggleAll,
+  onClose,
 }: MetalEarGymSidebarProps) {
   if (!isOpen) {
     return null;
@@ -23,7 +25,14 @@ export default function MetalEarGymSidebar({
     selectedIntervals.length === allIntervalNames.length;
 
   return (
-    <aside className="w-80 border-r border-white/5 bg-[#080808] flex flex-col shrink-0 z-20">
+    <>
+      {/* Mobile backdrop — tapping closes the sidebar */}
+      <div
+        className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside className="fixed inset-y-0 left-0 md:relative md:inset-auto w-80 border-r border-white/5 bg-[#080808] flex flex-col shrink-0 z-50 md:z-20">
       <div className="p-8 pb-1">
         <div className="flex items-center gap-3 mb-1">
           <div className="w-12 h-12 bg-red-600 flex items-center justify-center rounded-2xl shadow-lg shadow-red-900/20 rotate-3">
@@ -88,6 +97,7 @@ export default function MetalEarGymSidebar({
           );
         })}
       </nav>
-    </aside>
+      </aside>
+    </>
   );
 }

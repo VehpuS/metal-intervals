@@ -8,7 +8,7 @@ export default function MetalEarGymSongResults({
   onPlayClick,
 }: MetalEarGymSongResultsProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-10 custom-scrollbar pb-32">
+    <div className="flex-1 overflow-y-auto p-4 md:p-10 custom-scrollbar pb-24 md:pb-32">
       <div className="max-w-5xl mx-auto space-y-4">
         {songs.length > 0 ? (
           songs.map((song) => (
