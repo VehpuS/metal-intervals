@@ -17,9 +17,8 @@ concurrency:
 
 jobs:
   build:
+    environment: github-pages
     runs-on: ubuntu-latest
-    env:
-      VITE_SHEET_CSV_URL: ${{ vars.VITE_SHEET_CSV_URL || secrets.VITE_SHEET_CSV_URL || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJXrIXfNA2hHnuh3jmAdvgOReDSnBhSpbHwaFRrKAJGW8PxJ3hcE0CKxQCVIFOKjEWN55hcJulMO-v/pub?gid=921780761&single=true&output=csv' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,6 +36,8 @@ jobs:
         run: npm ci
 
       - name: Build app
+        env:
+          VITE_SHEET_CSV_URL: ${{ vars['VITE_SHEET_CSV_URL'] }}
         run: npm run build
 
       - name: Upload Pages artifact
