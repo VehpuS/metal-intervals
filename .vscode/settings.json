@@ -21,6 +21,14 @@
     "/^gh secret list/": {
       "approve": true,
       "matchCommandLine": true
+    },
+    "/^node -v$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^printf \"nvmrc=%s\\\\nnode=%s\\\\n\" \"\\$\\(cat \\.nvmrc\\)\" \"\\$\\(node -v\\)\"$/": {
+      "approve": true,
+      "matchCommandLine": true
     }
   }
 }
