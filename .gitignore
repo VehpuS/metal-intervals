@@ -14,4 +14,5 @@ pnpm-debug.log*
 
 # Playwright test artifacts
 .playwright-mcp
-./*.png
+*.png
+test-results

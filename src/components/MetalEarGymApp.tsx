@@ -91,7 +91,9 @@ export default function MetalEarGymApp({ data }: MetalEarGymAppProps) {
                   : "Show interval drawer"
               }
               aria-expanded={isLeftSidebarOpen}
-              className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-zinc-800 bg-zinc-900/40 flex items-center justify-center text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors shrink-0"
+              className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-zinc-800 bg-zinc-900/40 items-center justify-center text-zinc-300 hover:text-white hover:border-zinc-700 transition-colors shrink-0 ${
+                isLeftSidebarOpen ? "hidden md:flex" : "flex"
+              }`}
             >
               {isLeftSidebarOpen ? (
                 <ChevronLeft className="w-5 h-5" />

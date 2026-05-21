@@ -1,3 +1,18 @@
 {
-  "cSpell.words": ["papaparse"]
+  "cSpell.words": ["papaparse"],
+  "chat.tools.terminal.autoApprove": {
+    "/^npx playwright test --list --reporter=json$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^npx playwright test --list --reporter=dot$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^npm run test:e2e:sweep \\| tee sweep_output\\.log \\| grep -E \"passed\\|failed\\|flaky\\|worker\\|%\\)\"$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "lsof": true
+  }
 }
