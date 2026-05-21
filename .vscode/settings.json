@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["papaparse"],
+  "cSpell.words": ["papaparse", "triaging", "Vite"],
   "chat.tools.terminal.autoApprove": {
     "/^npx playwright test --list --reporter=json$/": {
       "approve": true,
@@ -13,6 +13,14 @@
       "approve": true,
       "matchCommandLine": true
     },
-    "lsof": true
+    "lsof": true,
+    "/^gh variable list/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^gh secret list/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
   }
 }
